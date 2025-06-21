@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="projeto_pi.MainPage">
 
-    <StackLayout Padding="30">
-        <Label Text="Bem-vindo ao IPlay" 
-               VerticalOptions="CenterAndExpand" 
-               HorizontalOptions="CenterAndExpand" />
+    <StackLayout Padding="30" Spacing="20">
+        <Label Text="Bem-vindo ao IPlay"
+               VerticalOptions="Center"
+               HorizontalOptions="Center" />
+        <Button Text="Iniciar Quiz" Clicked="OnStartQuiz" />
     </StackLayout>
 
 </ContentPage>

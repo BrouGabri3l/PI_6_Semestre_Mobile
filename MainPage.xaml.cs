@@ -10,6 +10,11 @@
 
         }
 
+        void OnStartQuiz(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new Views.QuizPage());
+        }
+
     }
 
 }

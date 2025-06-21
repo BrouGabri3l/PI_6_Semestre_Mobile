@@ -7,11 +7,20 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Maui.Alerts;
-
 namespace projeto_pi.ViewModels;
 
-public class LoginViewModel : INotifyPropertyChanged
+
+public class RegisterViewModel : INotifyPropertyChanged
 {
+    readonly AuthService _authService;
+
+    string _name = string.Empty;
+    public string Name
+    {
+        get => _name;
+        set { _name = value; OnPropertyChanged(); }
+    }
+
     string _email = string.Empty;
     public string Email
     {
@@ -33,36 +42,31 @@ public class LoginViewModel : INotifyPropertyChanged
         set { _isBusy = value; OnPropertyChanged(); }
     }
 
-    public Command LoginCommand { get; }
+    public Command RegisterCommand { get; }
 
-    readonly AuthService _authService;
+    public RegisterViewModel() : this(MauiProgram.Services.GetRequiredService<AuthService>()) { }
 
-    public LoginViewModel() : this(MauiProgram.Services.GetRequiredService<AuthService>()) { }
-
-    public LoginViewModel(AuthService authService)
+    public RegisterViewModel(AuthService authService)
     {
         _authService = authService;
-        LoginCommand = new Command(async () => await LoginAsync());
+        RegisterCommand = new Command(async () => await RegisterAsync());
     }
 
-    async Task LoginAsync()
+    async Task RegisterAsync()
     {
         if (IsBusy) return;
         try
         {
             IsBusy = true;
-            var user = await _authService.LoginAsync(Email, Password);
+            await _authService.RegisterAsync(Name, Email, Password);
             IsBusy = false;
-            if (user != null)
-            {
-                await Snackbar.Make("Login realizado com sucesso").Show();
-                await Application.Current!.MainPage!.Navigation.PushAsync(new MainPage());
-            }
+            await Snackbar.Make("Cadastro realizado com sucesso").Show();
+            await Application.Current!.MainPage!.Navigation.PopAsync();
         }
         catch (Exception ex)
         {
             IsBusy = false;
-            await Snackbar.Make($"Erro ao fazer login: {ex.Message}").Show();
+            await Snackbar.Make($"Erro ao cadastrar: {ex.Message}").Show();
         }
     }
 

@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace projeto_pi.Models
+namespace projeto_pi.Models;
+
+public class QuestionModel
 {
-    public class QuestionModel
-    {
-        public string Text { get; set; } = string.Empty;
-        public ObservableCollection<OptionModel> Options { get; set; } = new();
-        public int MinimumSelections { get; set; } = 1;
-    }
+    public string Text { get; set; } = string.Empty;
+    public string Tag { get; set; } = string.Empty;
+    public ObservableCollection<OptionModel> Options { get; set; } = new();
+    public int MinimumSelections { get; set; } = 1;
 }
