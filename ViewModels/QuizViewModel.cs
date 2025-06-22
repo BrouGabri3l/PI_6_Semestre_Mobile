@@ -16,7 +16,9 @@ public class QuizViewModel : INotifyPropertyChanged
 {
     int _currentIndex;
     bool _isBusy;
-
+    int _gamesPage = 1;
+    bool _gamesHasNext = true;
+    bool _loadingGames;
     public ObservableCollection<QuestionModel> Questions { get; } = new();
 
     public int CurrentIndex
@@ -64,12 +66,36 @@ public class QuizViewModel : INotifyPropertyChanged
             Questions.Clear();
             foreach (var q in list)
                 Questions.Add(q);
+            await LoadGameOptionsAsync();
         }
         catch (Exception ex)
         {
             await Snackbar.Make($"Erro ao buscar perguntas: {ex.Message}").Show();
         }
         IsBusy = false;
+    }
+
+    async Task LoadGameOptionsAsync()
+    {
+        if (_loadingGames || !_gamesHasNext) return;
+        _loadingGames = true;
+        try
+        {
+            var question = Questions.FirstOrDefault(q => q.Tag == "FAVORITE_GAMES");
+            if (question != null)
+            {
+                var result = await _quizService.GetGameOptionsAsync(_gamesPage);
+                foreach (var opt in result.Options)
+                    question.Options.Add(opt);
+                _gamesPage++;
+                _gamesHasNext = result.HasNextPage;
+            }
+        }
+        catch (Exception ex)
+        {
+            await Snackbar.Make($"Erro ao buscar jogos: {ex.Message}").Show();
+        }
+        _loadingGames = false;
     }
 
     async Task NextAsync()
@@ -104,5 +130,11 @@ public class QuizViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
     void OnPropertyChanged([CallerMemberName] string? name = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    public async Task LoadMoreOptionsAsync()
+    {
+        if (CurrentQuestion?.Tag == "FAVORITE_GAMES")
+            await LoadGameOptionsAsync();
+    }
 }

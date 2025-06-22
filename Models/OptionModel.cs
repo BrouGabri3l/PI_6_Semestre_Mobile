@@ -15,6 +15,8 @@ namespace projeto_pi.Models
         public string Text { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
 
+        public string Image { get; set; } = string.Empty;
+
         public bool IsSelected
         {
             get => _isSelected;

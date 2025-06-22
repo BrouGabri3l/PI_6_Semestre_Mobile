@@ -9,4 +9,10 @@ public partial class QuizPage : ContentPage
 		InitializeComponent();
         BindingContext = new QuizViewModel();
     }
+
+    async void OnRemainingItemsThresholdReached(object sender, EventArgs e)
+    {
+        if (BindingContext is QuizViewModel vm)
+            await vm.LoadMoreOptionsAsync();
+    }
 }

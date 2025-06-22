@@ -44,7 +44,27 @@ public class QuizService
         }
         return questions;
     }
-
+    public async Task<(List<OptionModel> Options, bool HasNextPage)> GetGameOptionsAsync(int page)
+    {
+        var path = $"/games/quiz/template?page={page}&perPage=50";
+        var json = await _api.GetAsync<JsonElement>(path, _auth.Token);
+        var list = new List<OptionModel>();
+        bool hasNext = false;
+        if (json.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var item in json.GetProperty("data").EnumerateArray())
+            {
+                list.Add(new OptionModel
+                {
+                    Text = item.GetProperty("answer").GetString() ?? string.Empty,
+                    Value = item.GetProperty("value").GetInt32().ToString(),
+                    Image = item.GetProperty("image").GetString() ?? string.Empty
+                });
+            }
+            hasNext = json.GetProperty("pagination").GetProperty("hasNextPage").GetBoolean();
+        }
+        return (list, hasNext);
+    }
     public async Task SubmitQuizAsync(Dictionary<string, object> answers)
     {
         await _api.PostAsync("/quiz", answers, _auth.Token);

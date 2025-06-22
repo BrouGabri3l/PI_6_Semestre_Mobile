@@ -5,16 +5,18 @@
              Title="QuizPage">
     <StackLayout Padding="20" Spacing="10">
         <Label Text="{Binding CurrentQuestion.Text}" FontAttributes="Bold" FontSize="Medium" />
-        <CollectionView ItemsSource="{Binding CurrentQuestion.Options}">
+        <CollectionView ItemsSource="{Binding CurrentQuestion.Options}" RemainingItemsThreshold="2" RemainingItemsThresholdReached="OnRemainingItemsThresholdReached">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="5">
+                    <Grid Padding="5" ColumnSpacing="10">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Label Text="{Binding Text}" Grid.Column="0" />
-                        <CheckBox IsChecked="{Binding IsSelected}" Grid.Column="1" />
+                        <Image Source="{Binding Image}" HeightRequest="40" WidthRequest="40" Grid.Column="0" />
+                        <Label Text="{Binding Text}" Grid.Column="1" />
+                        <CheckBox IsChecked="{Binding IsSelected}" Grid.Column="2" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
