@@ -11,24 +11,11 @@ public class RecommendationViewModel
 {
     public ObservableCollection<RecommendationModel> Recommendations { get; } = new();
 
-    public RecommendationViewModel()
-    {
-        LoadSampleData();
-    }
+    public RecommendationViewModel() { }
 
-    void LoadSampleData()
+    public RecommendationViewModel(IEnumerable<RecommendationModel> recommendations)
     {
-        Recommendations.Add(new RecommendationModel
-        {
-            Title = "Game 1",
-            Description = "Descrição do jogo 1",
-            Image = "bem_vindo.png"
-        });
-        Recommendations.Add(new RecommendationModel
-        {
-            Title = "Game 2",
-            Description = "Descrição do jogo 2",
-            Image = "splash.png"
-        });
+        foreach (var rec in recommendations)
+            Recommendations.Add(rec);
     }
 }

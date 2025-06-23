@@ -81,8 +81,8 @@ public class ApiService
         return JsonSerializer.Deserialize<T>(content, _options);
     }
 
-    public async Task PostAsync(string path, object? data = null, string? token = null)
+    public async Task<object?> PostAsync(string path, object? data = null, string? token = null)
     {
-        await PostAsync<object?>(path, data, token);
+        return await PostAsync<object?>(path, data, token);
     }
 }

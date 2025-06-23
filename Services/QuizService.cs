@@ -65,8 +65,27 @@ public class QuizService
         }
         return (list, hasNext);
     }
-    public async Task SubmitQuizAsync(Dictionary<string, object> answers)
+    public async Task<JsonElement> SubmitQuizAsync(Dictionary<string, object> answers)
     {
-        await _api.PostAsync("/quiz", answers, _auth.Token);
+       return await _api.PostAsync<JsonElement>("/quiz", answers, _auth.Token);
+    }
+
+    public async Task<List<RecommendationModel>> GetRecommendationsAsync()
+    {
+        var jsonList = await _api.GetAsync<JsonElement[]>("/games/recomendations", _auth.Token);
+        var list = new List<RecommendationModel>();
+        if (jsonList == null) return list;
+        foreach (var item in jsonList)
+        {
+            list.Add(new RecommendationModel
+            {
+                GameId = item.GetProperty("game_id").GetInt32(),
+                Name = item.GetProperty("name").GetString() ?? string.Empty,
+                HeaderImage = item.GetProperty("header_image").GetString() ?? string.Empty,
+                ShortDescription = item.GetProperty("short_description").GetString() ?? string.Empty,
+                ReleaseDate = item.GetProperty("release_date").GetDateTime()
+            });
+        }
+        return list;
     }
 }

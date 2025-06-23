@@ -1,13 +1,15 @@
+using projeto_pi.Models;
 using projeto_pi.ViewModels;
 
 namespace projeto_pi.Views;
 
 public partial class RecommendationPage : ContentPage
 {
-	public RecommendationPage()
-	{
-		InitializeComponent();
+    public RecommendationPage() : this(Array.Empty<RecommendationModel>()) { }
 
-        BindingContext = new RecommendationViewModel();
+    public RecommendationPage(IEnumerable<RecommendationModel> recommendations)
+    {
+        InitializeComponent();
+        BindingContext = new RecommendationViewModel(recommendations);
     }
 }

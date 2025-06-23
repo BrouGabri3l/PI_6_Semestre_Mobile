@@ -8,8 +8,11 @@ namespace projeto_pi.Models
 {
     public class RecommendationModel
     {
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Image { get; set; } = string.Empty;
+        public int GameId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string HeaderImage { get; set; } = string.Empty;
+        public string ShortDescription { get; set; } = string.Empty;
+        public DateTime ReleaseDate { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

@@ -66,6 +66,9 @@ public class QuizViewModel : INotifyPropertyChanged
             Questions.Clear();
             foreach (var q in list)
                 Questions.Add(q);
+            CurrentIndex = 0;
+            MainThread.BeginInvokeOnMainThread(() =>
+                OnPropertyChanged(nameof(CurrentQuestion)));
             await LoadGameOptionsAsync();
         }
         catch (Exception ex)
@@ -106,26 +109,33 @@ public class QuizViewModel : INotifyPropertyChanged
         if (CurrentIndex < Questions.Count - 1)
         {
             CurrentIndex++;
+            return;
         }
-        else
+
+        var answers = new Dictionary<string, object>();
+        foreach (var q in Questions)
         {
-            var answers = new Dictionary<string, object>();
-            foreach (var q in Questions)
-            {
-                var values = q.Options.Where(o => o.IsSelected).Select(o => (object)o.Value).ToList();
-                answers[q.Tag] = values;
-            }
-            try
-            {
-                await _quizService.SubmitQuizAsync(answers);
-                await Snackbar.Make("Quiz enviado com sucesso").Show();
-                await Application.Current!.MainPage!.Navigation.PushAsync(new Views.RecommendationPage());
-            }
-            catch (Exception ex)
-            {
-                await Snackbar.Make($"Erro ao enviar quiz: {ex.Message}").Show();
-            }
+            var values = q.Options
+                .Where(o => o.IsSelected)
+                .Select(o =>
+                    q.Tag == "FAVORITE_GAMES"
+                        ? (object)int.Parse(o.Value)
+                        : o.Value)
+                .ToList();
+            answers[q.Tag] = values;
         }
+        try
+        {
+            var profile = await _quizService.SubmitQuizAsync(answers);
+            var recommendations = await _quizService.GetRecommendationsAsync();
+            await Snackbar.Make("Quiz enviado com sucesso").Show();
+            await Application.Current!.MainPage!.Navigation.PushAsync(new Views.RecommendationPage(recommendations));
+        }
+        catch (Exception ex)
+        {
+            await Snackbar.Make($"Erro ao enviar quiz: {ex.Message}").Show();
+        }
+
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
